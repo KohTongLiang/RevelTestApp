@@ -1,0 +1,45 @@
+{{set . "title" "Update Entry"}}
+{{template "header.html" .}}
+
+
+<form class="form form-horizontal col-md-6 col-md-offset-3" action="" method="">
+    Name: <input class="form-control" type="text" id="name" name="Name" value=""/><br/>
+    Entry: <input class="form-control" type="text" id="entry" name="Entry" value=""/><br/>
+    <input class="form-control" id="updateItem" type="submit" value="Update Data" />
+</form>
+
+<input type="hidden" id="itemId" value={{.id}}/>
+
+<script>
+var newItem = function(name, entry) {
+	this.Name = name;
+	this.Entry = entry;
+}
+
+$('#updateItem').on('click', function(e) {
+	e.preventDefault();
+    var newitem = new newItem($('#name').val(), $('#entry').val());
+    var jsonItem = JSON.stringify(newitem);
+
+	$.ajax({
+		url: '/BidItemCtrl/Update?id=' + {{.id}},
+	    contentType: 'application/json; charset=utf-8',
+	    type: 'PUT',
+	    data: jsonItem
+	}).done(function() {
+		window.location.replace('/App/Index');
+	});
+});
+
+$(document).on('ready', function() {
+	$.ajax({
+		url: '/BidItemCtrl/Get?id=' + {{.id}},
+		type: 'GET'
+	}).done(function(data) {
+		$('#name').val(data.name);
+		$('#entry').val(data.entry);
+	});
+});
+</script>
+
+{{template "footer.html" .}}

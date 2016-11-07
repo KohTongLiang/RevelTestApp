@@ -1,0 +1,10 @@
+{{set . "title" "Register Account"}}
+{{template "header.html" .}}
+
+<form class="form form-horizontal col-md-6 col-md-offset-3" action="/App/LoginAcc" method="GET">
+    <h2>Login to a new account</h2>
+    Username: <input class="form-control" type="text" id="username" name="username" value=""/><br/>
+    Password: <input class="form-control" type="password" id="password" name="password" value=""/><br/>
+    <input class="form-control" id="addItem" type="submit" value="Submit Data" /><br/>
+    If do not have an account, click <a href="/App/Register">here</a> to login.
+</form>

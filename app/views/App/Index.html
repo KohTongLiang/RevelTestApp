@@ -1,0 +1,86 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+  <h2 class="col-md-6 col-md-offset-3"><a href="App/Logout">Logout</a></h2>
+
+<form class="form form-horizontal col-md-6 col-md-offset-3" action="" method="">
+    <h2>Add new entry</h2>
+    Name: <input class="form-control" type="text" id="name" name="Name" value=""/><br/>
+    Entry: <input class="form-control" type="text" id="entry" name="Entry" value=""/><br/>
+    <input class="form-control" id="addItem" type="submit" value="Submit Data" />
+</form>
+
+<div class="form-group col-md-8 col-md-offset-2">
+  <table class="table table-bordered">
+    <thead>
+      <th>Name</th>
+      <th>Entry</th>
+      <th></th>
+      <th></th>
+    </thead>
+    <tbody id="tableBody">
+      
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).on('ready', function() {
+  fillTable();
+});
+
+  var newItem = function(name, entry) {
+    this.Name = name;
+    this.Entry = entry;
+  }
+
+  $('#addItem').on('click', function(e){
+    e.preventDefault();
+    var newitem = new newItem($('#name').val(), $('#entry').val());
+    var jsonItem = JSON.stringify(newitem);
+    $.ajax({
+      url: '/BidItemCtrl/Add',
+      dataType: "json",
+      contentType: 'application/json; charset=utf-8',
+      type: 'POST',
+      data: jsonItem
+    }).done(function(data) {
+      fillTable();
+      $('#name').val('');
+      $('#entry').val('');
+    });
+  });
+
+  var fillTable = function() {
+    $('#tableBody').empty();
+    $.ajax({
+      url: '/BidItemCtrl/List',
+      contentType: 'application/json; charset=utf-8',
+      type: 'GET'
+    }).done(function(data) {
+        $.each(data, function(index, value) {
+          $('#tableBody').append('<tr><td>' + value.name + '</td><td>' + value.entry + '</td><td><button class="btn btn-danger" onclick="deleteItem(' + value.id + ')">Delete</button></td><td><a href="/App/Update?id='+ value.id +'" class="btn btn-default">Update</a></td></tr>');
+        });
+    });
+  }
+
+  var deleteItem = function (id) {
+    event.preventDefault();
+    $.ajax({
+      url: '/BidItemCtrl/Delete?id=' + id,
+      type: 'DELETE'
+    }).done(function () {
+      fillTable();
+    });
+  }
+</script>
+
+{{template "footer.html" .}}
